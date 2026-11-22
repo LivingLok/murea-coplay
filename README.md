@@ -1,2 +1,1 @@
-# murea-coplay
-Player and director interface for collaborative story experiments. Private backend and research data are hosted separately.
+Player and director interface. Backend and research data are hosted separately.
