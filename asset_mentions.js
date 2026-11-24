@@ -13,6 +13,7 @@
  const imageUrl=a=>hciApiURL(a.image_url)+'?token='+encodeURIComponent(token);
  const kind=a=>a.kind==='place'?'场景':a.subject_kind==='物件'?'物品':'人物';
  function choose(a){if(input.disabled)return;const start=context?.start??input.selectionStart,end=context?.end??input.selectionEnd;input.setRangeText('@'+a.name+' ',start,end,'end');context=null;menu.hidden=true;input.setAttribute('aria-expanded','false');input.removeAttribute('aria-activedescendant');input.focus();input.dispatchEvent(new Event('input',{bubbles:true}));menu.hidden=true;}
+ window.insertAssetMention=id=>{const a=assets.find(x=>x.id===id);if(a){context=null;choose(a);}};
  function selected(){chips.replaceChildren();for(const id of ids(input.value)){const a=assets.find(a=>a.id===id),chip=document.createElement('span');chip.textContent='@'+a.name;chips.append(chip);}}
  function update(){selected();const before=input.value.slice(0,input.selectionStart),at=before.lastIndexOf('@'),q=before.slice(at+1);context=at>=0&&!/[A-Za-z0-9_]/.test(before[at-1]||'')&&!/[\n ]/.test(q)?{start:at,end:input.selectionStart,query:q}:null;
   menu.replaceChildren();if(!context||input.disabled){menu.hidden=true;input.setAttribute('aria-expanded','false');return;}

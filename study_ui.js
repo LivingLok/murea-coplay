@@ -48,7 +48,7 @@
       if(story){
         if(role==='player')$('roleHelp').textContent='你扮演'+story.protagonist+'。描述其尝试、观察或选择，结果由世界回应。';
         $('directorCards').hidden=true;
-        if(role==='director'&&story.director_outline){let outline=$('studyOutline');if(!outline){outline=document.createElement('div');outline.id='studyOutline';outline.className='callout';$('inputTitle').parentElement.after(outline);}outline.hidden=false;outline.textContent='导演材料\n'+story.director_outline;}
+
       }
       return;
     }
@@ -76,10 +76,6 @@
     $('recordPanel').hidden=!s.recording_permission?.screen;
     if(s.recording_permission?.screen&&!navigator.mediaDevices?.getDisplayMedia){$('recordStart').disabled=true;$('recordStatus').textContent='当前网址不支持浏览器录屏。主持人需使用经过同意的应用窗口录制方式，并在主持台关联文件编号。';}
     $('directorCards').hidden=true;
-    if(role==='director'&&s.director_outline){
-      let outline=$('studyOutline');if(!outline){outline=document.createElement('div');outline.id='studyOutline';outline.className='callout';$('inputTitle').parentElement.after(outline);}
-      outline.hidden=false;outline.textContent='导演材料\n'+s.director_outline+(s.director_assets.length?'\n可用资产：'+s.director_assets.map(a=>a.name).join('、'):'');
-    }else if($('studyOutline'))$('studyOutline').hidden=true;
     const key=[rid,role,s.instrument_version].join(':');
     if(formKey!==key){
       formKey=key;backgroundLoaded=false;
