@@ -13,7 +13,19 @@
   document.querySelector('.intro').append(materialsButton);
   const dialog=document.createElement('dialog');dialog.id='materialsDialog';dialog.className='materials-dialog';dialog.setAttribute('aria-labelledby','materialsTitle');
   dialog.innerHTML='<div class="materials-heading"><div><div class="eyebrow">本房间的故事材料</div><h2 id="materialsTitle"></h2></div><button id="closeMaterials" class="secondary">关闭故事与素材</button></div><p id="materialsRole" class="hint"></p><div class="materials-copy"><section><h3>共同开场</h3><p id="materialsOpening"></p></section><section id="directorMaterial" hidden><h3>导演提纲 · 仅导演可见</h3><p id="materialsOutline"></p><h3>叙事方向／可能性</h3><p id="materialsMainline"></p><h3>场景设定</h3><p id="materialsSetting"></p></section></div><h3 id="materialsAssetsTitle">参考素材</h3><p class="hint">点击参考图放大；游玩阶段可引用到本轮输入。也可在输入框键入 @ 查找。</p><div id="materialsAssets" class="asset-grid"></div>';
-  document.body.append(dialog);materialsButton.onclick=()=>dialog.showModal();$('closeMaterials').onclick=()=>dialog.close();
+  document.body.append(dialog);
+  const storyPane=dialog.querySelector('.materials-copy');storyPane.id='materialStoryPane';
+  const assetPane=document.createElement('section');assetPane.id='materialAssetPane';assetPane.hidden=true;
+  const assetHeading=$('materialsAssetsTitle'),assetHelp=assetHeading.nextElementSibling;
+  assetPane.append(assetHeading,assetHelp,$('materialsAssets'));dialog.append(assetPane);
+  const nav=document.createElement('div');nav.className='material-tabs';nav.setAttribute('role','tablist');nav.setAttribute('aria-label','故事材料内容');
+  nav.innerHTML='<button id="materialStoryTab" role="tab" aria-selected="true" aria-controls="materialStoryPane">故事说明</button><button id="materialAssetTab" role="tab" aria-selected="false" aria-controls="materialAssetPane" class="secondary">参考素材</button>';
+  storyPane.before(nav);storyPane.setAttribute('role','tabpanel');assetPane.setAttribute('role','tabpanel');
+  for(const [button,pane] of [['materialStoryTab',storyPane],['materialAssetTab',assetPane]])$(button).onclick=()=>{
+    for(const [id,target] of [['materialStoryTab',storyPane],['materialAssetTab',assetPane]]){const selected=id===button;$(id).setAttribute('aria-selected',String(selected));$(id).classList.toggle('secondary',!selected);target.hidden=!selected;}
+    dialog.scrollTop=0;
+  };
+  materialsButton.onclick=()=>dialog.showModal();$('closeMaterials').onclick=()=>dialog.close();
   dialog.addEventListener('click',e=>{if(e.target===dialog){const b=dialog.getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)dialog.close();}});
   let materialKey='';
   function renderMaterials(){
@@ -21,6 +33,8 @@
     materialsButton.hidden=!joined;$('gameArea').hidden=!joined;
     if(!joined){$('input').disabled=true;return;}
     const story=state.story||{},assets=state.assets||[];
+    $('roleHelp').textContent=role==='director'?'你安排环境、其他人物与外界回应。打开“故事与素材”查看导演提纲和参考图。':'你扮演'+(story.protagonist||state.study?.protagonist||'本故事的主角')+'。描述其尝试、观察或选择，结果由世界回应。';
+    if(!state.previous&&!state.round.segments.length)$('screenLabel').textContent='本故事开场参考图 · 等待第一个决定';
     const key=JSON.stringify([rid,role,state.title,state.opening,story,assets]);
     if(key!==materialKey){
       materialKey=key;$('materialsTitle').textContent=state.title;
@@ -31,6 +45,7 @@
       $('materialsMainline').textContent=role==='director'?(story.mainline||'由导演根据世界状态安排。'):'';
       $('materialsSetting').textContent=role==='director'?(story.setting||'请参考共同开场和场景参考图。'):'';
       $('materialsAssetsTitle').textContent='参考素材 · '+assets.length+' 项';
+      $('materialAssetTab').textContent='参考素材（'+assets.length+'）';
       const grid=$('materialsAssets');grid.replaceChildren();
       for(const a of assets){
         const card=document.createElement('article');card.className='asset-card';
