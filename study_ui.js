@@ -92,6 +92,9 @@
     }
     if(s.paused)videos.forEach(v=>v.pause());
     const post=['rating','closed','stopped'].includes(s.stage);
+    if(post&&role==='director')$('visibility').textContent='本块已结束。草稿保留供回顾，不能继续修改；请填写下方私密反馈。';
+    else if(s.paused&&role==='director')$('visibility').textContent='已暂停；主持人恢复游玩后可继续操作。';
+    else if(state.maintenance&&role==='director')$('visibility').textContent='主持人正在维护系统，暂时不能编辑。';
     endedNotice.hidden=!post;
     if(post){
       const reason={time_limit:'本块已达到预设时长上限',round_limit:'本块已达到预设轮数上限'}[s.stop_reason]||'本块已结束';
@@ -102,6 +105,7 @@
     if(!online&&s.stage!=='playing')$('offline').textContent='视频生成服务未连接。仍可准备实验材料、填写表单和查看已有记录。';
     $('studyPause').disabled=post;$('studyStop').disabled=post;
     $('surveyPanel').hidden=!post;$('recallPanel').hidden=!post;$('accessCheck').hidden=role!=='director';
+    if(post&&$('surveyPanel').dataset.openedFor!==rid+':'+role){$('surveyPanel').open=true;$('surveyPanel').dataset.openedFor=rid+':'+role;}
     $('recordPanel').hidden=!s.recording_permission?.screen;
     if(s.recording_permission?.screen&&!navigator.mediaDevices?.getDisplayMedia){$('recordStart').disabled=true;$('recordStatus').textContent='当前网址不支持浏览器录屏。主持人需使用经过同意的应用窗口录制方式，并在主持台关联文件编号。';}
     $('directorCards').hidden=true;
