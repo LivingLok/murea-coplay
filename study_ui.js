@@ -57,7 +57,7 @@
     $('studyCohort').textContent=({debug:'调试记录 · 非参与者数据',replay:'回放验收 · 非新生成',capability:'系统能力检查',pilot:'预试',main:'正式场次'}[s.cohort]||s.cohort);
     let remaining=s.deadline_epoch?Math.max(0,s.deadline_epoch-Date.now()/1000-clockOffset/1000):null;
     $('studyStage').textContent=(s.paused?'已暂停；请联系主持人。':names[s.stage]||s.stage)+(s.stage==='playing'&&remaining!==null?' · 剩余 '+Math.ceil(remaining/60)+' 分钟 · 最多 '+s.max_rounds+' 轮':'');
-    $('roomLabel').textContent='房间 '+rid+' · '+(s.block===0?'练习':'第 '+s.block+' 块')+' · 固定 '+state.window_seconds+' 秒决策窗口';
+    $('roomLabel').textContent='房间 '+rid+' · '+(s.block===0?'练习':'第 '+s.block+' 块')+' · '+directorWindowLabel();
     if(role==='player')$('roleHelp').textContent='你扮演'+s.protagonist+'。描述其尝试、观察或选择，结果由世界回应。';
     const playing=s.stage==='playing'&&!s.paused&&!state.maintenance;
     if(!playing){$('input').disabled=true;$('submit').disabled=true;$('pass').disabled=true;$('next').hidden=true;}
